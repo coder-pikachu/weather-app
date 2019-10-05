@@ -1,34 +1,39 @@
 <template>
     <Page @loaded="onLoaded">
         <GridLayout columns="*" rows="auto,*,auto">
-            <GridLayout row="0" columns="auto, *" rows="*">
-                <Image column="0" height="100" width="100"
-                    verticalAlignment="middle" horizontalAlignment="left"
-                    margin="20" iosOverflowSafeArea="true"
-                    v-if="currentWeatherData.conditionIcon"
-                    :src="`https://openweathermap.org/img/wn/${currentWeatherData.conditionIcon}@2x.png`" />
-                <Label column="1" :text="currentWeatherData.city"
-                    class="day-text" verticalAlignment="middle"
-                    textAlignment="left" />
-            </GridLayout>
+            <FlexboxLayout @tap="onTapOfCity" justifyContent="center" row="0">
+                <StackLayout iosOverflowSafeArea="true" orientation="horizontal">
+                    <Image :src="`https://openweathermap.org/img/wn/${currentWeatherData.conditionIcon}@2x.png`"
+                           column="0"
+                           height="100"
+                           horizontalAlignment="left"
+                           margin="20 0 20 -10" verticalAlignment="middle"
 
-            <GridLayout columns="auto" rows="*" row="1"
-                horizontalAlignment="center">
+                           width="100"></Image>
+                    <Label :text="currentWeatherData.city" class="day-text"
+                           column="1" textAlignment="left"
+                           verticalAlignment="middle"></Label>
+                </StackLayout>
+            </FlexboxLayout>
+
+            <GridLayout columns="auto" horizontalAlignment="center" row="1"
+                        rows="*">
                 <StackLayout verticalAlignment="center">
-                    <Label row="0" textAlignment="right" class="temp-style"
-                        :text="getTemperatureText()"
-                        :fontSize="temperatureFontSize"
-                        :color="currentWeatherData.temperatureColor">
+                    <Label :color="currentWeatherData.temperatureColor" :fontSize="temperatureFontSize"
+                           :text="getTemperatureText()"
+                           class="temp-style"
+                           row="0"
+                           textAlignment="center">
                     </Label>
-                    <Label row="1"
-                        :text="`${currentWeatherData.currentDay}, ${currentWeatherData.currentDate}`"
-                        class="day-text" textAlignment="center" />
+                    <Label :text="`${currentWeatherData.currentDay}, ${currentWeatherData.currentDate}`"
+                           class="day-text"
+                           row="1" textAlignment="center"></Label>
                 </StackLayout>
             </GridLayout>
-            <GridLayout rows="*" columns="*" row="2" padding="20"
-                marginBottom="20">
+            <GridLayout columns="*" marginBottom="20" padding="20" row="2"
+                        rows="*">
                 <Label @loaded="onTodayLabelLoaded" class="text-display-style"
-                    iosOverflowSafeArea="true" textWrap="true">
+                       iosOverflowSafeArea="true" textWrap="true">
                 </Label>
             </GridLayout>
         </GridLayout>
@@ -44,19 +49,43 @@
 
     export default {
         filters: {
-            lowercase: function(value) {
+            lowercase: function (value) {
                 if (value) {
                     return value.toLowerCase();
                 } else return "";
             }
         },
         methods: {
+            clearWeatherData() {
+                this.currentWeatherData = {
+                    city: "",
+                    currentDay: "",
+                    currentDate: "",
+                    condition: "",
+                    conditionIcon: "",
+                    temperature: null,
+                    todaysText: "",
+                    temperatureColor: "black"
+                };
+                const formattedString = require("text/formatted-string");
+                this.labelObject.formattedText = new formattedString.FormattedString();
+
+            },
+            onTapOfCity() {
+                let randomCityIndex = Math.floor(Math.random() * this.listOfCitites.length);
+                let currentCity = this.listOfCitites[randomCityIndex];
+                this.clearWeatherData();
+                this.setTodaysDetails();
+                this.getWeatherForCity(currentCity);
+            },
+
             onTodayLabelLoaded(args) {
                 //:text="currentWeatherData.todaysText"
-                const label = args.object;
-                this.labelObject = label;
+                console.log("Setting label : ");
+                this.labelObject = args.object;
             },
             createFormattedString(stringsToFormat) {
+                //console.log(stringsToFormat);
                 if (stringsToFormat) {
                     const formattedString = require("text/formatted-string");
                     const formattedSpan = require("text/span");
@@ -75,7 +104,7 @@
                                 break;
                             default:
                                 console.log(
-                                "CUSTOM setting anything");
+                                    "CUSTOM setting anything");
                                 fspan.color = new ColorModule.Color(
                                     currentStrFragment.type
                                 );
@@ -84,22 +113,51 @@
                         }
                         fstringToSend.spans.push(fspan);
                     });
+                    //console.log(fstringToSend);
                     return fstringToSend;
                 } else {
                     return;
                 }
             },
-            onLoaded() {},
+            onLoaded() {
+            },
             getTemperatureText() {
                 if (this.currentWeatherData.temperature == null) {
-                    this.temperatureFontSize = 50;
+                    this.temperatureFontSize = 60;
                     return "Loading ...";
+
                 } else {
                     this.temperatureFontSize = 90;
                     return `${this.currentWeatherData.temperature}°C`;
                 }
             },
-            getMyWeather() {
+            getWeather: function (url) {
+                http.request({
+                    url: url,
+                    method: "GET"
+                }).then(this.parseResponse);
+            },
+            getWeatherForCity: function (city) {
+                var appId =
+                    "ed8226ba3a3c8c7ce5405af356b8906e";
+                var url =
+                    "https://api.openweathermap.org/data/2.5/weather?APPID=" +
+                    appId +
+                    "&units=metric&q=" + encodeURIComponent(city);
+                this.getWeather(url);
+            },
+            getWeatherForLocation: function (loc) {
+                var appId =
+                    "ed8226ba3a3c8c7ce5405af356b8906e";
+                var url =
+                    "https://api.openweathermap.org/data/2.5/weather?APPID=" +
+                    appId +
+                    "&units=metric&lat=" +
+                    loc.latitude +
+                    "&lon=" +
+                    loc.longitude;
+                this.getWeather(url);
+            }, getMyWeather(type) {
                 Geolocation.enableLocationRequest();
                 Geolocation.getCurrentLocation({
                     desiredAccuracy: Accuracy.high,
@@ -108,27 +166,10 @@
                 }).then(
                     loc => {
                         if (loc) {
-                            var appId =
-                            "ed8226ba3a3c8c7ce5405af356b8906e";
-                           /* var url =
-                                "https://api.openweathermap.org/data/2.5/weather?APPID=" +
-                                appId +
-                                "&units=metric&lat=" +
-                                loc.latitude +
-                                "&lon=" +
-                                loc.longitude; */
-                            var url =
-                                "https://api.openweathermap.org/data/2.5/weather?APPID=" +
-                                appId +
-                                "&units=metric&q=Mumbai" ;
-
-                            http.request({
-                                url: url,
-                                method: "GET"
-                            }).then(this.parseResponse);
+                            this.getWeatherForLocation(loc);
                         }
                     },
-                    function(e) {
+                    function (e) {
                         console.log("Error: " + e.message);
                     }
                 );
@@ -146,6 +187,7 @@
             },
             getCondition(weatherData) {
                 let firstDigit = weatherData.id.toString().charAt(0);
+                console.log("Condition code: " + weatherData.id);
                 switch (firstDigit) {
                     case "2":
                         return "thunderstorms";
@@ -174,30 +216,203 @@
                 );
                 this.currentWeatherData.temperatureColor = this
                     .conditionToColorMap[
-                        this.currentWeatherData.condition
+                    this.currentWeatherData.condition
                     ];
                 console.log(this.currentWeatherData.condition);
-                this.labelObject.formattedText = this.createFormattedString(
-                    this.conditionToTextMap[this.currentWeatherData
-                        .condition]
-                );
-                this.currentWeatherData.conditionIcon =
-                    weatherResponse.weather[0].icon;
+                console.log(`https://openweathermap.org/img/wn/${this.currentWeatherData.conditionIcon}@2x.png`);
+                this.labelObject.formattedText = this.createFormattedString(this.conditionToTextMap[this.currentWeatherData.condition]);
+
+                this.currentWeatherData.conditionIcon = weatherResponse.weather[0].icon;
+
+
+            },
+            setTodaysDetails() {
+
+                let todaysDate = new Date();
+                this.currentWeatherData.currentDate = `${todaysDate.getDate()} ${
+                    this.months[todaysDate.getMonth()]
+                }`;
+                this.currentWeatherData.currentDay = `${
+                    this.weekdays[todaysDate.getDay()]
+                }`;
             }
         },
-        mounted() {
-            let todaysDate = new Date();
-            this.currentWeatherData.currentDate = `${todaysDate.getDate()} ${
-            this.months[todaysDate.getMonth()]
-        }`;
-            this.currentWeatherData.currentDay = `${
-            this.weekdays[todaysDate.getDay()]
-        }`;
+        created() {
+            this.setTodaysDetails();
 
             this.getMyWeather();
         },
         data() {
             return {
+                listOfCitites: ["Tokyo",
+                    "Jakarta",
+                    "New York",
+                    "Seoul",
+                    "Manila",
+                    "Mumbai",
+                    "Sao Paulo",
+                    "Mexico City",
+                    "New Delhi",
+                    "Osaka",
+                    "Cairo",
+                    "Kolkata",
+                    "Los Angeles",
+                    "Shanghai",
+                    "Moscow",
+                    "Beijing",
+                    "Buenos Aires",
+                    "Guangzhou",
+                    "Shenzhen",
+                    "Istanbul",
+                    "Rio De Janeiro",
+                    "Paris",
+                    "Karachi",
+                    "Nagoya",
+                    "Chicago",
+                    "Lagos",
+                    "London",
+                    "Bangkok",
+                    "Kinshasa",
+                    "Tehran",
+                    "Lima",
+                    "Dongguan",
+                    "Bogota",
+                    "Chennai",
+                    "Dhaka",
+                    "Essen",
+                    "Tianjin",
+                    "Hong Kong",
+                    "Taipei",
+                    "Lahore",
+                    "Ho Chi Minh City",
+                    "Bangalore",
+                    "Hyderabad",
+                    "Johannesburg",
+                    "Baghdad",
+                    "Toronto",
+                    "Santiago",
+                    "Kuala Lumpur",
+                    "San Francisco",
+                    "Philadelphia",
+                    "Wuhan",
+                    "Miami",
+                    "Dallas",
+                    "Madrid",
+                    "Ahmedabad",
+                    "Boston",
+                    "Belo Horizonte",
+                    "Khartoum",
+                    "Saint Petersburg",
+                    "Shenyang",
+                    "Houston",
+                    "Pune",
+                    "Riyadh",
+                    "Singapore",
+                    "Washington",
+                    "Yangon",
+                    "Milan",
+                    "Atlanta",
+                    "Chongqing",
+                    "Alexandria",
+                    "Nanjing",
+                    "Guadalajara",
+                    "Barcelona",
+                    "Chengdu",
+                    "Detroit",
+                    "Ankara",
+                    "Abidjan",
+                    "Athens",
+                    "Berlin",
+                    "Sydney",
+                    "Monterrey",
+                    "Phoenix",
+                    "Busan",
+                    "Recife",
+                    "Bandung",
+                    "Porto Alegre",
+                    "Melbourne",
+                    "Luanda",
+                    "Hangzhou",
+                    "Algiers",
+                    "Hà Noi",
+                    "Montréal",
+                    "Xi'an",
+                    "Pyongyang",
+                    "Qingdao",
+                    "Surat",
+                    "Fortaleza",
+                    "Medellín",
+                    "Durban",
+                    "Kanpur",
+                    "Addis Ababa",
+                    "Nairobi",
+                    "Jeddah",
+                    "Naples",
+                    "Kabul",
+                    "Salvador",
+                    "Harbin",
+                    "Kano",
+                    "Casablanca",
+                    "Cape Town",
+                    "Curitiba",
+                    "Surabaya",
+                    "San Diego",
+                    "Seattle",
+                    "Rome",
+                    "Dar Es Salaam",
+                    "Taichung",
+                    "Jaipur",
+                    "Caracas",
+                    "Dakar",
+                    "Kaohsiung",
+                    "Minneapolis",
+                    "Lucknow",
+                    "Amman",
+                    "Tel Aviv-yafo",
+                    "Guayaquil",
+                    "Kyiv",
+                    "Faisalabad",
+                    "Mashhad",
+                    "Izmir",
+                    "Rawalpindi",
+                    "Tashkent",
+                    "Katowice",
+                    "Changchun",
+                    "Campinas",
+                    "Daegu",
+                    "Changsha",
+                    "Nagpur",
+                    "San Juan",
+                    "Aleppo",
+                    "Lisbon",
+                    "Frankfurt Am Main",
+                    "Nanchang",
+                    "Birmingham[]",
+                    "Tampa",
+                    "Medan",
+                    "Dalian",
+                    "Tunis",
+                    "Shijiazhuang",
+                    "Manchester",
+                    "Port-au-prince",
+                    "Damascus",
+                    "Ji'nan",
+                    "Fukuoka",
+                    "Santo Domingo",
+                    "Havana",
+                    "Cali",
+                    "Denver",
+                    "St. Louis",
+                    "Colombo",
+                    "Dubai",
+                    "Baltimore",
+                    "Sapporo",
+                    "Rotterdam",
+                    "Vancouver",
+                    "Preston",
+                    "Patna",
+                    "Sana'a",
+                    "Warsaw"],
                 temperatureFontSize: 30,
                 labelObject: null,
                 weekdays: [
@@ -236,9 +451,9 @@
                 },
                 conditionToTextMap: {
                     sunny: [{
-                            text: "It's going to be ",
-                            type: "normal"
-                        },
+                        text: "It's going to be ",
+                        type: "normal"
+                    },
                         {
                             text: "sunny",
                             type: "#F1C40F"
@@ -249,9 +464,9 @@
                         }
                     ],
                     cloudy: [{
-                            text: "Today's weather is ",
-                            type: "normal"
-                        },
+                        text: "Today's weather is ",
+                        type: "normal"
+                    },
                         {
                             text: "cloudy",
                             type: "#95A5A6"
@@ -270,9 +485,9 @@
                         }
                     ],
                     cloudySun: [{
-                            text: "Cloudy ",
-                            type: "#95A5A6"
-                        },
+                        text: "Cloudy ",
+                        type: "#95A5A6"
+                    },
                         {
                             text: "and ",
                             type: "normal"
@@ -287,18 +502,18 @@
                         }
                     ],
                     lightRains: [{
-                            text: "Light rains ",
-                            type: "#5DADE2"
-                        },
+                        text: "Light rains ",
+                        type: "#5DADE2"
+                    },
                         {
                             text: "today. Don't forget that umbrella!",
                             type: "normal"
                         }
                     ],
                     sunnyRains: [{
-                            text: "Rains ",
-                            type: "#5DADE2"
-                        },
+                        text: "Rains ",
+                        type: "#5DADE2"
+                    },
                         {
                             text: "and ",
                             type: "normal"
@@ -313,9 +528,9 @@
                         }
                     ],
                     heavyRains: [{
-                            text: "Its gonna ",
-                            type: "normal"
-                        },
+                        text: "Its gonna ",
+                        type: "normal"
+                    },
                         {
                             text: "fucking pour",
                             type: "#2874A6"
@@ -326,18 +541,18 @@
                         }
                     ],
                     windy: [{
-                            text: "Windy ",
-                            type: "#D35400"
-                        },
+                        text: "Windy ",
+                        type: "#D35400"
+                    },
                         {
                             text: "AF! its gonna blow your wig off!",
                             type: "normal"
                         }
                     ],
                     thunderstorms: [{
-                            text: "Rains ",
-                            type: "#566573"
-                        },
+                        text: "Rains ",
+                        type: "#566573"
+                    },
                         {
                             text: "and ",
                             type: "normal"
@@ -352,9 +567,9 @@
                         }
                     ],
                     fog: [{
-                            text: "Foggy ",
-                            type: "#ABB2B9"
-                        },
+                        text: "Foggy ",
+                        type: "#ABB2B9"
+                    },
                         {
                             text: "AF. Can you see anything ahead of you!",
                             type: "normal"
@@ -370,7 +585,7 @@
                     conditionIcon: "",
                     temperature: null,
                     todaysText: "",
-                    temperatureColor: ""
+                    temperatureColor: "black"
                 }
             };
         }
@@ -380,14 +595,14 @@
 <style scoped>
     .text-display-style {
         padding: 10;
-        font-size: 60;
+        font-size: 50;
         font-weight: bold;
         line-height: -10;
     }
 
     .day-text {
-        padding-right: 30;
         font-size: 30;
+        color: black;
         font-weight: 200;
     }
 
@@ -396,8 +611,7 @@
     }
 
     .temp-style {
-        padding-right: 30;
-
+        color: dimgrey;
         font-weight: bold;
 
     }

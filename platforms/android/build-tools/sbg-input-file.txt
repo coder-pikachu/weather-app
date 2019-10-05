@@ -1,0 +1,1 @@
+/Users/sangrammohite/OneDrive/Development/App Projects/NativeScript/weather-app/platforms/android/app/src/main/assets/app

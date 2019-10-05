@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Users/sangrammohite/OneDrive/Development/App Projects/NativeScript/weather-app/platforms/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-sw320dp-v13/values-sw320dp-v13.xml",
+            "map": [
+                {
+                    "source": "/Users/sangrammohite/.gradle/caches/transforms-2/files-2.1/535040aeda4c6998cfdf68e2206f3562/TNSCalendar-release/res/values-sw320dp-v13/values-sw320dp-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "54",
+                        "endOffsets": "105"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,57 @@
+PODS:
+  - IQKeyboardManager (6.2.1)
+  - MaterialComponents/AnimationTiming (84.6.0)
+  - MaterialComponents/Ink (84.6.0):
+    - MaterialComponents/private/Math
+  - MaterialComponents/Palettes (84.6.0)
+  - MaterialComponents/private/Application (84.6.0)
+  - MaterialComponents/private/Math (84.6.0)
+  - MaterialComponents/ShadowElevations (84.6.0)
+  - MaterialComponents/ShadowLayer (84.6.0):
+    - MaterialComponents/ShadowElevations
+  - MaterialComponents/Tabs (84.6.0):
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/Ink
+    - MaterialComponents/Palettes
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFInternationalization
+  - MaterialComponents/Typography (84.6.0):
+    - MaterialComponents/private/Application
+    - MaterialComponents/private/Math
+  - MDFInternationalization (2.0.0)
+  - QBImagePickerController (3.4.0)
+  - SAMKeychain (1.5.3)
+  - SDWebImage (5.2.2):
+    - SDWebImage/Core (= 5.2.2)
+  - SDWebImage/Core (5.2.2)
+
+DEPENDENCIES:
+  - IQKeyboardManager (~> 6.2.0)
+  - MaterialComponents/Tabs (~> 84.4)
+  - QBImagePickerController (~> 3.4.0)
+  - SAMKeychain (~> 1.5.3)
+  - SDWebImage (>= 5.0.6)
+
+SPEC REPOS:
+  trunk:
+    - IQKeyboardManager
+    - MaterialComponents
+    - MDFInternationalization
+    - QBImagePickerController
+    - SAMKeychain
+    - SDWebImage
+
+SPEC CHECKSUMS:
+  IQKeyboardManager: 964638372b4a61892cc74fdfa6fd26de8c9464a2
+  MaterialComponents: 71139af6ca6875fbde8ab8e64a275b7fd6a22d7f
+  MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
+  SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
+  SDWebImage: 5fcdb02cc35e05fc35791ec514b191d27189f872
+
+PODFILE CHECKSUM: 3683ca5546c3dbdbb0e670adde29054f0f1e6abc
+
+COCOAPODS: 1.8.1

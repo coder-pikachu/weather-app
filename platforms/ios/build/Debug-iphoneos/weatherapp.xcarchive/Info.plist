@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ApplicationProperties</key>
+	<dict>
+		<key>ApplicationPath</key>
+		<string>Applications/weatherapp.app</string>
+		<key>CFBundleIdentifier</key>
+		<string>org.hightimeshq.weatherapp</string>
+		<key>CFBundleShortVersionString</key>
+		<string>1.0.0</string>
+		<key>CFBundleVersion</key>
+		<string>1.0.0</string>
+		<key>SigningIdentity</key>
+		<string>Apple Development: mohite.sangram@gmail.com (SEELHN4UR8)</string>
+		<key>Team</key>
+		<string>7D684NY6VY</string>
+	</dict>
+	<key>ArchiveVersion</key>
+	<integer>2</integer>
+	<key>CreationDate</key>
+	<date>2019-10-05T17:03:51Z</date>
+	<key>Name</key>
+	<string>weatherapp</string>
+	<key>SchemeName</key>
+	<string>weatherapp</string>
+</dict>
+</plist>

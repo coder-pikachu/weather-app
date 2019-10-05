@@ -1,0 +1,4 @@
+/Users/sangrammohite/OneDrive/Development/App Projects/NativeScript/weather-app/platforms/android/app/src/main/assets/app/runtime.js
+/Users/sangrammohite/OneDrive/Development/App Projects/NativeScript/weather-app/platforms/android/app/src/main/assets/app/bundle.js
+/Users/sangrammohite/OneDrive/Development/App Projects/NativeScript/weather-app/platforms/android/app/src/main/assets/app/vendor.js
+/Users/sangrammohite/OneDrive/Development/App Projects/NativeScript/weather-app/platforms/android/app/src/main/assets/app/tns-java-classes.js
